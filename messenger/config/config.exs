@@ -59,6 +59,10 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :messenger, Messenger.Guardian,
+  issuer: "messenger",
+  secret_key: "lsWvn8jhRHamSbTbLCkCrklwLjgWwmZ2i+Ge8WDFcvk/0WMdQLZPqys7o9H8kAGr"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
