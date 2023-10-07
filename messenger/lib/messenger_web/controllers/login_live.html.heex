@@ -1,0 +1,6 @@
+<.form for={@form} phx-change="validate" phx-submit="save" phx-hook="Session" id="login_form">
+  <.input type="email" field={@form[:email]} placeholder="email"/>
+  <.input type="password" field={@form[:password]} placeholder="password"/>
+  <div><%= @error %></div>
+  <button type="submit">Save</button>
+</.form>
