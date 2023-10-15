@@ -6,24 +6,40 @@ defmodule Messenger.Message do
   alias __MODULE__
 
   schema "messages" do
-    field :receiver_id, :integer
-    field :sender_id, :integer
     field :body, :string
 
-    belongs_to(:users, Messenger.User, define_field: false, foreign_key: :sender_id)
+    belongs_to(:chat, Messenger.Chat)
+    belongs_to(:user, Messenger.User)
 
     timestamps()
   end
 
   def send_message_changeset(message, attrs) do
     message
-    |> cast(attrs, [:sender_id, :receiver_id, :body])
-    |> validate_required([:sender_id, :receiver_id, :body])
+    |> cast(attrs, [:body, :user_id, :chat_id])
+    |> validate_required([:body, :user_id, :chat_id])
+  end
+
+  def edit_message_changeset(message, attrs) do
+    message
+    |> cast(attrs, [:body, :user_id, :chat_id])
+    |> validate_required([:body, :user_id, :chat_id])
   end
 
   def send_message(params) do
     changeset = send_message_changeset(%Message{}, params)
 
     Repo.insert(changeset)
+  end
+
+  def get_message_by_id(message_id) do
+    Repo.get_by!(Message, id: message_id)
+  end
+
+  def edit_message(message_id, body) do
+    message = Repo.get!(Message, message_id)
+    changeset = message |> Ecto.Changeset.change(body: body)
+
+    Repo.update(changeset)
   end
 end

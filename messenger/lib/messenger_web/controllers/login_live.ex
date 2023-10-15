@@ -1,8 +1,9 @@
 defmodule MessengerWeb.LoginLive do
   use Phoenix.LiveView
   import Phoenix.Component
+  import MessengerWeb.BaseComponents
 
-  def mount(params, session, socket) do
+  def mount(_params, _session, socket) do
     {:ok,
      assign(
        socket,
@@ -11,33 +12,7 @@ defmodule MessengerWeb.LoginLive do
      )}
   end
 
-  attr :field, Phoenix.HTML.FormField
-  attr :rest, :global, include: ~w(type)
-
-  def input(assigns) do
-    ~H"""
-    <div>
-      <input id={@field.id} name={@field.name} value={@field.value} {@rest} />
-      <.errors errors={@field.errors} />
-    </div>
-    """
-  end
-
-  def errors(assigns) do
-    if Enum.empty?(assigns.errors) do
-      ~L""
-    else
-      {error, _} = List.first(assigns.errors)
-
-      ~H"""
-      <div>
-        <%= error %>
-      </div>
-      """
-    end
-  end
-
-  def handle_event("validate", %{"user" => user} = params, socket) do
+  def handle_event("validate", %{"user" => user} = _params, socket) do
     form =
       %Messenger.User{}
       |> Messenger.User.create_user_changeset(user)
@@ -47,7 +22,7 @@ defmodule MessengerWeb.LoginLive do
     {:noreply, assign(socket, form: form)}
   end
 
-  def handle_event("save", %{"user" => user} = params, socket) do
+  def handle_event("save", %{"user" => user} = _params, socket) do
     with {:ok, user} <- Messenger.User.login(user) do
       {:ok, token, _claims} = Messenger.Guardian.encode_and_sign(user)
       {:noreply, push_event(socket, "setSession", %{token: token})}
@@ -55,5 +30,14 @@ defmodule MessengerWeb.LoginLive do
       {:error, error} ->
         {:noreply, assign(socket, error: error)}
     end
+  end
+
+  def handle_event("sign_up", _params, socket) do
+    {:noreply, push_navigate(socket, to: "/register")}
+  end
+
+  def handle_event("redirect_to_chats", _params, socket) do
+    IO.inspect(~c"redirect")
+    {:noreply, push_navigate(socket, to: "/chats")}
   end
 end

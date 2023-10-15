@@ -21,7 +21,7 @@ defmodule MessengerWeb do
 
   def router do
     quote do
-      use Phoenix.Router, helpers: false
+      use Phoenix.Router, helpers: true
 
       # Import common connection and controller functions to use in pipelines
       import Plug.Conn
@@ -44,6 +44,7 @@ defmodule MessengerWeb do
 
       import Plug.Conn
       import MessengerWeb.Gettext
+      import Phoenix.LiveView.Controller
 
       unquote(verified_routes())
     end
@@ -102,6 +103,9 @@ defmodule MessengerWeb do
         router: MessengerWeb.Router,
         statics: MessengerWeb.static_paths()
     end
+  end
+
+  def view() do
   end
 
   @doc """

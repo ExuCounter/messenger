@@ -49,10 +49,10 @@ let Hooks = {};
 Hooks.LocalStateStore = LocalStateStore;
 Hooks.Session = {
   mounted() {
-    this.handleEvent("setSession", ({ token }) => {
+    this.handleEvent("setSession", async ({ token }) => {
       sessionStorage.setItem("token", token);
 
-      fetch(`/auth`, {
+      await fetch(`/auth`, {
         method: "post",
         body: JSON.stringify({ token }),
         credentials: "include",
@@ -60,7 +60,35 @@ Hooks.Session = {
           "x-csrf-token": csrfToken,
           "Content-Type": "application/json",
         },
-      });
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          console.log(res);
+          this.pushEvent("redirect_to_chats", {});
+        });
+    });
+
+    this.handleEvent("removeSession", async () => {
+      sessionStorage.removeItem("token");
+
+      await fetch(`/logout`, {
+        method: "post",
+        body: JSON.stringify({}),
+        credentials: "include",
+        headers: {
+          "x-csrf-token": csrfToken,
+          "Content-Type": "application/json",
+        },
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((res) => {
+          console.log(res);
+          this.pushEvent("redirect_to_login", {});
+        });
     });
   },
 };

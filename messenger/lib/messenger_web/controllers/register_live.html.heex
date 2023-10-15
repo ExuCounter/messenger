@@ -1,3 +1,5 @@
+<button phx-click="login">login</button>
+
 <.form for={@form} phx-change="validate" phx-submit="save" phx-hook="Session" id="register_form">
   <.input type="email" field={@form[:email]} placeholder="email"/>
   <.input type="password" field={@form[:password]} placeholder="password"/>

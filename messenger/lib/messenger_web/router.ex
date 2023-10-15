@@ -1,5 +1,39 @@
+defmodule MessengerWeb.Auth do
+  import Phoenix.LiveView
+
+  @moduledoc """
+  Ensures common `assigns` are applied to all LiveViews attaching this hook.
+  """
+
+  def on_mount(:check_auth, _params, session, socket) do
+    if session["current_user"] do
+      {:halt, redirect(socket, to: "/chats")}
+    else
+      {:cont, socket}
+    end
+  end
+
+  def on_mount(:verify_auth, _params, session, socket) do
+    if session["current_user"] do
+      {:cont, socket}
+    else
+      {:halt, redirect(socket, to: "/login")}
+    end
+  end
+end
+
+defmodule MessengerWeb.RedirectController do
+  use MessengerWeb, :controller
+  @send_to "/login"
+
+  def redirector(conn, _params) do
+    redirect(conn, to: @send_to)
+  end
+end
+
 defmodule MessengerWeb.Router do
   use MessengerWeb, :router
+  import Phoenix.LiveView.Router
 
   pipeline :browser do
     plug(:accepts, ["html"])
@@ -17,8 +51,19 @@ defmodule MessengerWeb.Router do
   scope "/", MessengerWeb do
     pipe_through(:browser)
 
-    get("/", PageController, :home)
-    get("/messenger/get_message/:message_id", PageController, :get_message)
+    post("/auth", AuthController, :authorize)
+    post("/logout", AuthController, :logout)
+
+    live_session :auth, on_mount: {MessengerWeb.Auth, :check_auth} do
+      live("/login", LoginLive)
+      live("/register", RegisterLive)
+    end
+
+    live_session :user, on_mount: {MessengerWeb.Auth, :verify_auth} do
+      live("/chats", ChatsLive)
+    end
+
+    get("/*path", RedirectController, :redirector)
   end
 
   # Other scopes may use custom stacks.
