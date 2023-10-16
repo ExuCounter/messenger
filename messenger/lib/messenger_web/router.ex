@@ -22,15 +22,6 @@ defmodule MessengerWeb.Auth do
   end
 end
 
-defmodule MessengerWeb.RedirectController do
-  use MessengerWeb, :controller
-  @send_to "/login"
-
-  def redirector(conn, _params) do
-    redirect(conn, to: @send_to)
-  end
-end
-
 defmodule MessengerWeb.Router do
   use MessengerWeb, :router
   import Phoenix.LiveView.Router
@@ -62,8 +53,6 @@ defmodule MessengerWeb.Router do
     live_session :user, on_mount: {MessengerWeb.Auth, :verify_auth} do
       live("/chats", ChatsLive)
     end
-
-    get("/*path", RedirectController, :redirector)
   end
 
   # Other scopes may use custom stacks.

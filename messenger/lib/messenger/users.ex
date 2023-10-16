@@ -30,6 +30,7 @@ defmodule Messenger.User do
     |> validate_required([:email, :password])
     |> validate_email(:email)
     |> validate_length(:password, min: 2)
+    |> unique_constraint(:email)
     |> put_password_hash(:password)
   end
 

@@ -4,7 +4,7 @@ defmodule MessengerWeb.ActiveChatLive do
 
   def render(assigns) do
     ~H"""
-    <div phx-hook="Session" id="active_chat">
+    <div>
       <div :if={assigns.chat}>
         <div :for={message <- @chat.messages}>
           <.live_component module={MessengerWeb.Message} message={message} id={message.id} />

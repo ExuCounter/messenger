@@ -7,21 +7,11 @@ defmodule MessengerWeb.RegisterLive do
     socket =
       socket
       |> assign(
-        :form,
-        to_form(Messenger.User.create_user_changeset(%Messenger.User{}, %{email: ""}))
+        form: to_form(Messenger.User.create_user_changeset(%Messenger.User{}, %{email: ""})),
+        error: nil
       )
-      |> assign(:user, %Messenger.User{})
-      |> IO.inspect()
 
     {:ok, socket}
-  end
-
-  def user(assigns) do
-    ~H"""
-    <div>
-      <%= inspect(assigns.user) %>
-    </div>
-    """
   end
 
   def handle_event("validate", %{"user" => user} = _params, socket) do
@@ -43,13 +33,13 @@ defmodule MessengerWeb.RegisterLive do
   end
 
   def handle_event("save", %{"user" => user} = _params, socket) do
-    Messenger.User.create_user(user)
-
-    with {:ok, user} <- Messenger.User.login(user) do
-      {:ok, token, _claims} = Messenger.Guardian.encode_and_sign(user)
+    with {:ok, user} <- Messenger.User.create_user(user),
+         {:ok, _logged_user} <-
+           Messenger.User.login(user),
+         {:ok, token, _claims} <- Messenger.Guardian.encode_and_sign(user) do
       {:noreply, push_event(socket, "setSession", %{token: token})}
     else
-      _ -> {:noreply, socket}
+      _ -> {:noreply, assign(socket, error: "User is not created")}
     end
   end
 end
