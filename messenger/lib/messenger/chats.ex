@@ -10,6 +10,7 @@ defmodule Messenger.Chat do
 
     has_many(:messages, Messenger.Message)
     belongs_to(:user, Messenger.User)
+    has_many(:users, Messenger.User)
 
     timestamps()
   end

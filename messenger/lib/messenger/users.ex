@@ -24,6 +24,14 @@ defmodule Messenger.User do
     end)
   end
 
+  def format_errors(errors) do
+    Enum.map(errors, fn {msg, opts} ->
+      Regex.replace(~r"%{(\w+)}", msg, fn _, key ->
+        opts |> Keyword.get(String.to_existing_atom(key), key) |> to_string()
+      end)
+    end)
+  end
+
   def create_user_changeset(user, attrs) do
     user
     |> cast(attrs, [:email, :password])
@@ -39,7 +47,6 @@ defmodule Messenger.User do
     |> cast(attrs, [:email, :password])
     |> validate_required([:email, :password])
     |> validate_email(:email)
-    |> validate_length(:password, min: 2)
   end
 
   def put_password_hash(changeset, _field) do

@@ -5,8 +5,10 @@ defmodule MessengerWeb.Message do
     IO.inspect(assigns.message)
 
     ~H"""
-    <div>
-      Message body <%= assigns.message.body %>
+    <div class="message">
+      <div class="message_body">
+        <%= assigns.message.body %>
+      </div>
     </div>
     """
   end

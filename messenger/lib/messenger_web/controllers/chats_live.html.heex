@@ -1,9 +1,5 @@
-<div phx-hook="Session" id="logout">
-  <button phx-click="logout">Logout</button>
-</div>
-
 <div style="display: flex">
-  <div>
+  <div class="main-sidebar">
     <div :for={chat <- @current_user.chats}>
       <div phx-click="open_chat" phx-value-chat_id={chat.id}><%= chat.title %></div>
     </div>
@@ -14,8 +10,11 @@
         <button type="submit">Save</button>
       </.form>
     </div>
+<div phx-hook="Session" id="logout">
+  <button phx-click="logout">Logout</button>
+</div>
   </div>
-  <div :if={@active_chat}>
+  <div :if={@active_chat} class="main-body">
     <.live_component module={MessengerWeb.ActiveChatLive} id="active_chat" chat={@active_chat} current_user_id={@current_user.id}/>
   </div>
 </div>

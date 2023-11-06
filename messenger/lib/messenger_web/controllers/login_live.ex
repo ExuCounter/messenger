@@ -1,7 +1,7 @@
 defmodule MessengerWeb.LoginLive do
   use Phoenix.LiveView
-  import Phoenix.Component
   import MessengerWeb.BaseComponents
+  import MessengerWeb.Header
 
   def mount(_params, _session, socket) do
     {:ok,
@@ -15,7 +15,7 @@ defmodule MessengerWeb.LoginLive do
   def handle_event("validate", %{"user" => user} = _params, socket) do
     form =
       %Messenger.User{}
-      |> Messenger.User.create_user_changeset(user)
+      |> Messenger.User.login_user_changeset(user)
       |> Map.put(:action, :insert)
       |> to_form()
 

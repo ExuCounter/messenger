@@ -2,6 +2,7 @@ defmodule MessengerWeb.RegisterLive do
   use Phoenix.LiveView
   import Phoenix.Component
   import MessengerWeb.BaseComponents
+  import MessengerWeb.Header
 
   def mount(_params, _session, socket) do
     socket =

@@ -5,13 +5,13 @@ defmodule MessengerWeb.BaseComponents do
     if Enum.empty?(assigns.errors) do
       ~L""
     else
-      {error, _} = List.first(assigns.errors)
+      error = Messenger.User.format_errors(assigns.errors)
       assigns = assign(assigns, error: error)
 
       ~H"""
-      <div>
+      <span class="form-binding-error">
         <%= @error %>
-      </div>
+      </span>
       """
     end
   end
@@ -21,8 +21,8 @@ defmodule MessengerWeb.BaseComponents do
 
   def input(assigns) do
     ~H"""
-    <div>
-      <input id={@field.id} name={@field.name} value={@field.value} {@rest} />
+    <div class="form-binding-wrapper">
+      <input class="input" id={@field.id} name={@field.name} value={@field.value} {@rest} />
       <.errors errors={@field.errors} />
     </div>
     """
@@ -33,7 +33,7 @@ defmodule MessengerWeb.BaseComponents do
 
   def textarea(assigns) do
     ~H"""
-    <div>
+    <div class="form-binding-wrapper">
       <textarea id={@field.id} name={@field.name} {@rest}><%= @field.value %></textarea>
       <.errors errors={@field.errors} />
     </div>
