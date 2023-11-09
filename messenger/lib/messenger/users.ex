@@ -2,6 +2,7 @@ defmodule Messenger.User do
   use Ecto.Schema
   alias Messenger.Repo
   import Ecto.Changeset
+  import Ecto.Query, only: [from: 2]
 
   alias __MODULE__
 
@@ -9,7 +10,8 @@ defmodule Messenger.User do
     field :email, :string
     field :password, :string, virtual: true
     field :password_hash, :string
-    has_many(:chats, Messenger.Chat)
+
+    many_to_many(:chats, Messenger.Chat, join_through: Messenger.UserChat, on_replace: :delete)
 
     timestamps()
   end
@@ -40,6 +42,7 @@ defmodule Messenger.User do
     |> validate_length(:password, min: 2)
     |> unique_constraint(:email)
     |> put_password_hash(:password)
+    |> delete_change(:password)
   end
 
   def login_user_changeset(user, attrs) do
@@ -63,6 +66,11 @@ defmodule Messenger.User do
   def create_user(user) do
     changeset = create_user_changeset(%User{}, user)
     Repo.insert(changeset)
+  end
+
+  def search_users(search) do
+    query = from u in User, where: like(u.email, ^"#{search}%")
+    Repo.all(query)
   end
 
   def get_user_by_id(user_id) do

@@ -5,12 +5,12 @@ defmodule MessengerWeb.ActiveChatLive do
   def render(assigns) do
     ~H"""
     <div class="chat">
-      <div>
+      <div class="chat_messages">
         <div :for={message <- @chat.messages}>
           <.live_component module={MessengerWeb.Message} message={message} id={message.id} />
         </div>
       </div>
-      <.form for={@form} phx-submit="save" phx-target={@myself} class="message-form">
+      <.form for={@form} phx-submit="save" phx-target={@myself} class="chat_message-form">
         <.textarea type="text" field={@form[:body]} placeholder="Chat body" />
         <button>Send</button>
       </.form>

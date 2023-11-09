@@ -10,13 +10,28 @@ defmodule Messenger.Chat do
 
     has_many(:messages, Messenger.Message)
     belongs_to(:user, Messenger.User)
-    has_many(:users, Messenger.User)
+    many_to_many(:users, Messenger.User, join_through: Messenger.UserChat, on_replace: :delete)
 
     timestamps()
   end
 
   def create_chat_changeset(chat, attrs) do
-    chat |> cast(attrs, [:user_id, :title]) |> validate_required([:user_id, :title])
+    user = Messenger.User.get_user_by_id(attrs.user_id)
+
+    chat
+    |> cast(attrs, [:user_id, :title])
+    |> validate_required([:user_id, :title])
+    |> put_assoc(:users, [user])
+  end
+
+  def add_user_to_chat_by_id(params) do
+    user = Messenger.User.get_user_by_id(params.user_id)
+    chat = get_chat_by_id(params.chat_id) |> Repo.preload(:users)
+
+    chat
+    |> Ecto.Changeset.change()
+    |> Ecto.Changeset.put_assoc(:users, [user | chat.users])
+    |> Repo.update()
   end
 
   def create_chat(params) do

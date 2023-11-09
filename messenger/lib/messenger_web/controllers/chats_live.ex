@@ -12,7 +12,8 @@ defmodule MessengerWeb.ChatsLive do
        form:
          to_form(
            Messenger.Chat.create_chat_changeset(%Messenger.Chat{}, %{
-             title: ""
+             title: "",
+             user_id: user.id
            })
          ),
        active_chat: nil
@@ -20,7 +21,7 @@ defmodule MessengerWeb.ChatsLive do
   end
 
   def handle_event("save", %{"chat" => chat} = _params, socket) do
-    Messenger.Chat.create_chat(Map.put(chat, "user_id", socket.assigns.current_user.id))
+    Messenger.Chat.create_chat(%{user_id: socket.assigns.current_user.id, title: chat["title"]})
 
     {:ok,
      assign(socket, current_user: Messenger.Repo.preload(socket.assigns.current_user, :chats))}
@@ -40,8 +41,6 @@ defmodule MessengerWeb.ChatsLive do
   end
 
   def handle_event("open_chat", %{"chat_id" => chat_id} = _params, socket) do
-    IO.inspect(socket.assigns.form)
-
     chat =
       Messenger.Chat.get_chat_by_id(chat_id) |> Messenger.Repo.preload(:messages)
 

@@ -1,16 +1,18 @@
 <div style="display: flex">
+  <.live_component module={MessengerWeb.SearchLive} id="search"/>
   <div class="main-sidebar">
-    <div :for={chat <- @current_user.chats}>
-      <div phx-click="open_chat" phx-value-chat_id={chat.id}><%= chat.title %></div>
-    </div>
     <div>
-      Create chat
+      <p class="create_chat_form_title">Create chat</p>
       <.form for={@form} phx-submit="save" id="create_chat_form">
         <.input type="text" field={@form[:title]} placeholder="Chat title"/>
         <button type="submit">Save</button>
       </.form>
     </div>
-<div phx-hook="Session" id="logout">
+    <p class="chat_list_title">Chats</p>
+    <div :for={chat <- @current_user.chats} class="main-sidebar__chat">
+      <div phx-click="open_chat" phx-value-chat_id={chat.id}><%= chat.id %><%= chat.title %></div>
+    </div>
+<div phx-hook="Session" id="logout" class="logout_container">
   <button phx-click="logout">Logout</button>
 </div>
   </div>
