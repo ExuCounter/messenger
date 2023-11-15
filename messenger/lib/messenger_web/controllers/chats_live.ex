@@ -1,7 +1,5 @@
 defmodule MessengerWeb.ChatsLive do
-  use Phoenix.LiveView
-  import Phoenix.Component
-  import MessengerWeb.BaseComponents
+  use MessengerWeb, :live_view
 
   def mount(_params, session, socket) do
     user = Messenger.Repo.preload(session["current_user"], [:chats])
@@ -18,6 +16,21 @@ defmodule MessengerWeb.ChatsLive do
          ),
        active_chat: nil
      )}
+  end
+
+  def handle_info(:reload_chats, socket) do
+    IO.inspect("reload")
+
+    {:noreply,
+     assign(socket,
+       current_user:
+         socket.assigns.current_user |> Messenger.Repo.reload() |> Messenger.Repo.preload(:chats)
+     )}
+
+    # else
+    #   {:error, error} ->
+    #     {:noreply, assign(socket, error: error)}
+    # end
   end
 
   def handle_event("save", %{"chat" => chat} = _params, socket) do

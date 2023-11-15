@@ -85,8 +85,9 @@ defmodule MessengerWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import MessengerWeb.CoreComponents
       import MessengerWeb.Gettext
+
+      use PetalComponents
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

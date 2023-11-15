@@ -1,10 +1,10 @@
 <.auth_header type="login" />
 
-<div class="auth-body">
-  <.form for={@form} phx-change="validate" phx-submit="save" phx-hook="Session" id="login_form" class="auth-form">
-    <.input type="email" field={@form[:email]} placeholder="email"/>
-    <.input type="password" field={@form[:password]} placeholder="password"/>
-    <div><%= @error %></div>
-    <button type="submit" class="submit-button">Login</button>
+<div class="flex flex-col items-center h-[calc(100vh-45px)] justify-center bg-secondary-100">
+  <.form for={@form} phx-change="validate" phx-submit="save" phx-hook="Session" class="block min-w-[300px]">
+    <.input type="email" field={@form[:email]} placeholder="email" class="mb-3"/>
+    <.input type="password" field={@form[:password]} placeholder="password" class="mb-3"/>
+    <div class="mb-3"><%= @error %></div>
+    <.button type="submit" class="submit-button" class="w-full">Login</.button>
   </.form>
 </div>

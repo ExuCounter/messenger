@@ -1,6 +1,5 @@
 defmodule MessengerWeb.LoginLive do
-  use Phoenix.LiveView
-  import MessengerWeb.BaseComponents
+  use MessengerWeb, :live_view
   import MessengerWeb.Header
 
   def mount(_params, _session, socket) do

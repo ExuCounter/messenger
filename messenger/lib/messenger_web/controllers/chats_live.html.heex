@@ -1,22 +1,19 @@
-<div style="display: flex">
-  <.live_component module={MessengerWeb.SearchLive} id="search"/>
-  <div class="main-sidebar">
+<div class="flex w-screen h-screen">
+  <div class="w-[250px] bg-primary-800 p-4 flex flex-col justify-between">
     <div>
-      <p class="create_chat_form_title">Create chat</p>
-      <.form for={@form} phx-submit="save" id="create_chat_form">
-        <.input type="text" field={@form[:title]} placeholder="Chat title"/>
-        <button type="submit">Save</button>
-      </.form>
-    </div>
-    <p class="chat_list_title">Chats</p>
-    <div :for={chat <- @current_user.chats} class="main-sidebar__chat">
-      <div phx-click="open_chat" phx-value-chat_id={chat.id}><%= chat.id %><%= chat.title %></div>
-    </div>
-<div phx-hook="Session" id="logout" class="logout_container">
-  <button phx-click="logout">Logout</button>
-</div>
+      <.live_component module={MessengerWeb.SearchLive} id="search" current_user_id={@current_user.id}/>
+      <p class="text-secondary-100 pb-3 font-bold">Chats</p>
+      <div class="flex flex-col">
+        <.button :for={chat <- @current_user.chats} phx-click="open_chat" phx-value-chat_id={chat.id} class="mb-4">
+          <%= chat.title %>
+        </.button>
+      </div>
+      </div>
+     <div phx-hook="Session" id="logout">
+        <.button phx-click="logout" variant="outline" class="w-full">Logout</.button>
+     </div>
   </div>
-  <div :if={@active_chat} class="main-body">
+  <div class="w-[calc(100vw-250px)]">
     <.live_component module={MessengerWeb.ActiveChatLive} id="active_chat" chat={@active_chat} current_user_id={@current_user.id}/>
   </div>
 </div>

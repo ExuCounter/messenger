@@ -2,6 +2,7 @@ defmodule Messenger.Chat do
   use Ecto.Schema
   alias Messenger.Repo
   import Ecto.Changeset
+  import Ecto.Query
 
   alias __MODULE__
 
@@ -39,7 +40,30 @@ defmodule Messenger.Chat do
     Repo.insert(changeset)
   end
 
+  def maybe_create_direct_chat_with_user(params) do
+    query =
+      from u in Messenger.User,
+        where: u.id == ^params.user_id,
+        join: c in assoc(u, :chats),
+        join: cu in assoc(c, :users),
+        where: ^params.required_user_id == cu.id,
+        select: %{id: c.id}
+
+    existing_chat = Repo.one(query)
+
+    if existing_chat do
+      {:existing_chat, get_chat_by_id(existing_chat.id)}
+    else
+      {:ok, chat} = create_chat(params)
+
+      {:ok, updated_chat} =
+        add_user_to_chat_by_id(%{chat_id: chat.id, user_id: params.required_user_id})
+
+      {:ok, updated_chat}
+    end
+  end
+
   def get_chat_by_id(chat_id) do
-    Repo.get_by(Chat, id: chat_id)
+    Repo.get_by(Chat, id: chat_id) |> Repo.preload([:users, :messages])
   end
 end

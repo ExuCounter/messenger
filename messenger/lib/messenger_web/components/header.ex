@@ -1,5 +1,5 @@
 defmodule MessengerWeb.Header do
-  use Phoenix.Component
+  use MessengerWeb, :html
 
   def get_auth_header_title(type) do
     case type do
@@ -13,7 +13,7 @@ defmodule MessengerWeb.Header do
 
   def header(assigns) do
     ~H"""
-    <div class="header header_public">
+    <div class="bg-primary-600 flex justify-between py-3 px-4 items-center">
       <%= render_slot(@inner_block) %>
     </div>
     """
@@ -24,12 +24,12 @@ defmodule MessengerWeb.Header do
   def auth_header(%{type: "login"} = assigns) do
     ~H"""
     <.header>
-      <h3 class="header__title">
+      <h3 class="text-secondary-100 font-bold">
         Login
       </h3>
-      <button phx-click="sign_up" class="header__button">
+      <.button phx-click="sign_up" color="secondary">
         Sign up
-      </button>
+      </.button>
     </.header>
     """
   end
@@ -37,12 +37,12 @@ defmodule MessengerWeb.Header do
   def auth_header(%{type: "register"} = assigns) do
     ~H"""
     <.header>
-      <h3 class="header__title">
+      <h3 class="text-secondary-100 font-bold">
         Register
       </h3>
-      <button phx-click="login" class="header__button">
+      <.button phx-click="login" color="secondary">
         Login
-      </button>
+      </.button>
     </.header>
     """
   end

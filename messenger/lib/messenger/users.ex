@@ -68,9 +68,16 @@ defmodule Messenger.User do
     Repo.insert(changeset)
   end
 
-  def search_users(search) do
-    query = from u in User, where: like(u.email, ^"#{search}%")
-    Repo.all(query)
+  def search_users(params) do
+    if String.length(params.search) < 3 do
+      []
+    else
+      query =
+        from u in User,
+          where: like(u.email, ^"#{params.search}%")
+
+      Repo.all(query)
+    end
   end
 
   def get_user_by_id(user_id) do
@@ -82,7 +89,7 @@ defmodule Messenger.User do
   end
 
   def login(%{"email" => email, "password" => password} = _params) do
-    case get_user_by_email(email) do
+    case get_user_by_email(email) |> IO.inspect() do
       nil ->
         {:error, "There is no such user"}
 

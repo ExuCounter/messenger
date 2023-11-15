@@ -1,7 +1,5 @@
 defmodule MessengerWeb.RegisterLive do
-  use Phoenix.LiveView
-  import Phoenix.Component
-  import MessengerWeb.BaseComponents
+  use MessengerWeb, :live_view
   import MessengerWeb.Header
 
   def mount(_params, _session, socket) do
@@ -34,6 +32,8 @@ defmodule MessengerWeb.RegisterLive do
   end
 
   def handle_event("save", %{"user" => user} = _params, socket) do
+    IO.inspect(user)
+
     with {:ok, user} <- Messenger.User.create_user(user),
          {:ok, _logged_user} <-
            Messenger.User.login(user),
