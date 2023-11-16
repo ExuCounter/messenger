@@ -22,8 +22,6 @@ defmodule MessengerWeb.Message do
   end
 
   def update(assigns, socket) do
-    IO.inspect(assigns)
-
     {:ok,
      assign(socket,
        current_user_id: assigns.current_user_id,

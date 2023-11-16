@@ -75,7 +75,8 @@ defmodule Messenger.User do
     else
       query =
         from u in User,
-          where: like(u.email, ^"#{params.search}%") and u.id not in ^params.excluded_ids
+          where: like(u.nickname, ^"#{params.search}%"),
+          where: u.id not in ^params.excluded_ids
 
       Repo.all(query)
     end

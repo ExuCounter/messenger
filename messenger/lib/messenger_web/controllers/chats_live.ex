@@ -4,6 +4,12 @@ defmodule MessengerWeb.ChatsLive do
   def mount(_params, session, socket) do
     user = Messenger.Repo.preload(session["current_user"], [:chats])
 
+    if length(user.chats) > 0 do
+      for i <- 0..(length(user.chats) - 1) do
+        MessengerWeb.Endpoint.subscribe("room:#{Enum.at(user.chats, i).id}")
+      end
+    end
+
     {:ok,
      assign(socket,
        current_user: user,
@@ -14,35 +20,32 @@ defmodule MessengerWeb.ChatsLive do
              user_id: user.id
            })
          ),
-       active_chat: Enum.at(user.chats, 0) |> Messenger.Repo.preload(:messages)
+       active_chat_id: nil
      )}
   end
 
   def handle_info(:reload_chats, socket) do
-    IO.inspect("reload")
-
     {:noreply,
      assign(socket,
-       current_user:
-         socket.assigns.current_user |> Messenger.Repo.reload() |> Messenger.Repo.preload(:chats)
+       active_chat_id: socket.assigns.active_chat_id
      )}
-
-    # else
-    #   {:error, error} ->
-    #     {:noreply, assign(socket, error: error)}
-    # end
   end
 
-  def handle_event("save", %{"chat" => chat} = _params, socket) do
-    Messenger.Chat.create_chat(%{user_id: socket.assigns.current_user.id, title: chat["title"]})
+  def handle_info(
+        %Phoenix.Socket.Broadcast{
+          event: _event,
+          payload: payload,
+          topic: _topic
+        },
+        socket
+      ) do
+    send_update(MessengerWeb.ActiveChatLive,
+      id: "active_chat",
+      active_chat_id: payload.chat_id,
+      current_user_id: socket.assigns.current_user.id
+    )
 
-    {:ok,
-     assign(socket, current_user: Messenger.Repo.preload(socket.assigns.current_user, :chats))}
-
-    # else
-    #   {:error, error} ->
-    #     {:noreply, assign(socket, error: error)}
-    # end
+    {:noreply, socket}
   end
 
   def handle_event("logout", _params, socket) do
@@ -54,9 +57,6 @@ defmodule MessengerWeb.ChatsLive do
   end
 
   def handle_event("open_chat", %{"chat_id" => chat_id} = _params, socket) do
-    chat =
-      Messenger.Chat.get_chat_by_id(chat_id) |> Messenger.Repo.preload(:messages)
-
-    {:noreply, assign(socket, active_chat: chat)}
+    {:noreply, assign(socket, active_chat_id: chat_id)}
   end
 end

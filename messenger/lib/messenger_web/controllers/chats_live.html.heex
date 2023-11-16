@@ -1,10 +1,11 @@
 <div class="flex w-screen h-screen">
   <div class="w-[250px] bg-primary-800 p-4 flex flex-col justify-between">
     <div>
+      <span class="text-white pb-8 font-bold">Hello, <%= @current_user.nickname %></span>
       <.live_component module={MessengerWeb.SearchLive} id="search" current_user_id={@current_user.id}/>
       <p class="text-secondary-100 pb-3 font-bold">Chats</p>
       <div class="flex flex-col">
-        <.button :for={chat <- @current_user.chats} phx-click="open_chat" phx-value-chat_id={chat.id} class="mb-4">
+        <.button :for={chat <- @current_user.chats} phx-click="open_chat" phx-value-chat_id={chat.id} class={"mb-4"} color={"#{if Integer.to_string(chat.id) == @active_chat_id, do: "secondary", else: "primary"}"}>
           <%= Enum.find(Messenger.Repo.preload(chat, :users).users, & &1.id != @current_user.id).nickname %>
         </.button>
       </div>
@@ -14,6 +15,6 @@
      </div>
   </div>
   <div class="w-[calc(100vw-250px)]">
-    <.live_component module={MessengerWeb.ActiveChatLive} id="active_chat" chat={@active_chat} current_user_id={@current_user.id}/>
+    <.live_component module={MessengerWeb.ActiveChatLive} id="active_chat" active_chat_id={@active_chat_id} current_user_id={@current_user.id}/>
   </div>
 </div>

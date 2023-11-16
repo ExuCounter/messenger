@@ -1,6 +1,10 @@
 defmodule MessengerWeb.ActiveChatLive do
   use MessengerWeb, :live_component
 
+  def mount(socket) do
+    {:ok, push_event(socket, "scroll_to_bottom", %{})}
+  end
+
   def render(assigns) do
     ~H"""
     <div class="bg-secondary-100 h-full">
@@ -65,24 +69,47 @@ defmodule MessengerWeb.ActiveChatLive do
       })
       |> to_form()
 
-    {:ok,
-     assign(socket,
-       form: form,
-       chat: assigns.chat,
-       user_id: assigns.current_user_id
-     )}
+    active_chat_id = Map.get(assigns, :active_chat_id, nil)
+
+    if active_chat_id do
+      {:ok,
+       push_event(
+         assign(socket,
+           form: form,
+           chat: active_chat_id |> Messenger.Chat.get_chat_by_id(),
+           user_id: assigns.current_user_id
+         ),
+         "scroll_to_bottom",
+         %{}
+       )}
+    else
+      {:ok,
+       assign(socket,
+         form: form,
+         chat: nil,
+         user_id: assigns.current_user_id
+       )}
+    end
   end
 
   def handle_event("save", %{"message" => message} = _params, socket) do
-    Messenger.Message.send_message(
-      message
-      |> Map.put("chat_id", socket.assigns.chat.id)
-      |> Map.put("user_id", socket.assigns.user_id)
-    )
+    {:ok, new_message} =
+      Messenger.Message.send_message(
+        message
+        |> Map.put("chat_id", socket.assigns.chat.id)
+        |> Map.put("user_id", socket.assigns.user_id)
+      )
 
-    chat =
-      Messenger.Chat.get_chat_by_id(socket.assigns.chat.id) |> Messenger.Repo.preload(:messages)
+    MessengerWeb.Endpoint.broadcast!("room:#{socket.assigns.chat.id}", "new_msg", new_message)
 
-    {:noreply, push_event(assign(socket, chat: chat), "scroll_to_bottom", %{})}
+    {:noreply,
+     push_event(
+       assign(socket,
+         chat:
+           Map.put(socket.assigns.chat, :messages, socket.assigns.chat.messages ++ [new_message])
+       ),
+       "scroll_to_bottom",
+       %{}
+     )}
   end
 end

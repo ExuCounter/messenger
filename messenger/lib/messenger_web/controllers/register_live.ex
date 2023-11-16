@@ -34,10 +34,10 @@ defmodule MessengerWeb.RegisterLive do
   def handle_event("save", %{"user" => user} = _params, socket) do
     IO.inspect(user)
 
-    with {:ok, user} <- Messenger.User.create_user(user),
+    with {:ok, created_user} <- Messenger.User.create_user(user),
          {:ok, _logged_user} <-
-           Messenger.User.login(user),
-         {:ok, token, _claims} <- Messenger.Guardian.encode_and_sign(user) do
+           Messenger.User.login(%{email: user["email"], password: user["password"]}),
+         {:ok, token, _claims} <- Messenger.Guardian.encode_and_sign(created_user) do
       {:noreply, push_event(socket, "setSession", %{token: token})}
     else
       a ->
