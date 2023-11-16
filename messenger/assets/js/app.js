@@ -93,6 +93,12 @@ Hooks.Session = {
   },
 };
 
+window.addEventListener(`phx:scroll_to_bottom`, () => {
+  let el = document.getElementById("scrollable-chat");
+
+  el && el.scrollTo({ behavior: "smooth", top: el.scrollHeight });
+});
+
 let liveSocket = new LiveSocket("/live", Socket, {
   params: { _csrf_token: csrfToken },
   hooks: Hooks,

@@ -14,7 +14,7 @@ defmodule MessengerWeb.ChatsLive do
              user_id: user.id
            })
          ),
-       active_chat: nil
+       active_chat: Enum.at(user.chats, 0) |> Messenger.Repo.preload(:messages)
      )}
   end
 

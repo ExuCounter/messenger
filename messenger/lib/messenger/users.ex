@@ -8,6 +8,7 @@ defmodule Messenger.User do
 
   schema "users" do
     field :email, :string
+    field :nickname, :string
     field :password, :string, virtual: true
     field :password_hash, :string
 
@@ -36,8 +37,8 @@ defmodule Messenger.User do
 
   def create_user_changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :password])
-    |> validate_required([:email, :password])
+    |> cast(attrs, [:email, :password, :nickname])
+    |> validate_required([:email, :password, :nickname])
     |> validate_email(:email)
     |> validate_length(:password, min: 2)
     |> unique_constraint(:email)
@@ -47,8 +48,8 @@ defmodule Messenger.User do
 
   def login_user_changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :password])
-    |> validate_required([:email, :password])
+    |> cast(attrs, [:email, :password, :nickname])
+    |> validate_required([:email, :password, :nickname])
     |> validate_email(:email)
   end
 
@@ -74,7 +75,7 @@ defmodule Messenger.User do
     else
       query =
         from u in User,
-          where: like(u.email, ^"#{params.search}%")
+          where: like(u.email, ^"#{params.search}%") and u.id not in ^params.excluded_ids
 
       Repo.all(query)
     end
@@ -88,12 +89,13 @@ defmodule Messenger.User do
     Repo.get_by(User, email: email)
   end
 
-  def login(%{"email" => email, "password" => password} = _params) do
-    case get_user_by_email(email) |> IO.inspect() do
+  def login(%{email: email, password: password} = _params) do
+    case get_user_by_email(email) do
       nil ->
         {:error, "There is no such user"}
 
       user ->
+        IO.inspect(user.password_hash)
         verified = Bcrypt.verify_pass(password, user.password_hash)
 
         if verified do

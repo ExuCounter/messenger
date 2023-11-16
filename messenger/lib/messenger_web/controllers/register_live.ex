@@ -40,7 +40,9 @@ defmodule MessengerWeb.RegisterLive do
          {:ok, token, _claims} <- Messenger.Guardian.encode_and_sign(user) do
       {:noreply, push_event(socket, "setSession", %{token: token})}
     else
-      _ -> {:noreply, assign(socket, error: "User is not created")}
+      a ->
+        IO.inspect(a)
+        {:noreply, assign(socket, error: "User is not created")}
     end
   end
 end

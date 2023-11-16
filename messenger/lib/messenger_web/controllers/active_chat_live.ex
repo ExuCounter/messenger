@@ -5,9 +5,32 @@ defmodule MessengerWeb.ActiveChatLive do
     ~H"""
     <div class="bg-secondary-100 h-full">
       <div :if={@chat}>
-        <div class="h-[calc(100vh-88px)] overflow-y-scroll">
-          <div :for={message <- @chat.messages} :if={length(@chat.messages) > 0}>
-            <.live_component module={MessengerWeb.Message} message={message} id={message.id} />
+        <div class="h-[calc(100vh-88px)] overflow-y-scroll" id="scrollable-chat">
+          <div :if={length(@chat.messages) > 0}>
+            <%= for i <- 0..length(@chat.messages) - 1 do %>
+              <div
+                :if={i === 0}
+                class="bg-primary-200 px-4 py-2 rounded-xl mt-5 text-center w-fit mx-auto block text-sm"
+              >
+                <%= Enum.at(@chat.messages, i).inserted_at |> Calendar.strftime("%d %B %Y") %>
+              </div>
+              <span
+                :if={
+                  i >= 1 &&
+                    Enum.at(@chat.messages, i).inserted_at.day >
+                      Enum.at(@chat.messages, i - 1).inserted_at.day
+                }
+                class="bg-primary-200 px-4 py-2 rounded-xl mt-5 text-center w-fit mx-auto block text-sm"
+              >
+                <%= Enum.at(@chat.messages, i).inserted_at |> Calendar.strftime("%d %B %Y") %>
+              </span>
+              <.live_component
+                module={MessengerWeb.Message}
+                message={Enum.at(@chat.messages, i)}
+                id={Enum.at(@chat.messages, i).id}
+                current_user_id={@user_id}
+              />
+            <% end %>
           </div>
           <div
             :if={length(@chat.messages) === 0}
@@ -60,6 +83,6 @@ defmodule MessengerWeb.ActiveChatLive do
     chat =
       Messenger.Chat.get_chat_by_id(socket.assigns.chat.id) |> Messenger.Repo.preload(:messages)
 
-    {:noreply, assign(socket, chat: chat)}
+    {:noreply, push_event(assign(socket, chat: chat), "scroll_to_bottom", %{})}
   end
 end

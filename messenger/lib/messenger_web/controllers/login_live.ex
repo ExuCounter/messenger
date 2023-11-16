@@ -22,7 +22,7 @@ defmodule MessengerWeb.LoginLive do
   end
 
   def handle_event("save", %{"user" => user} = _params, socket) do
-    with {:ok, user} <- Messenger.User.login(user),
+    with {:ok, user} <- Messenger.User.login(%{email: user["email"], password: user["password"]}),
          {:ok, token, _claims} <- Messenger.Guardian.encode_and_sign(user) do
       {:noreply, push_event(socket, "setSession", %{token: token})}
     else

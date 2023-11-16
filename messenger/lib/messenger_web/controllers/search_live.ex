@@ -21,14 +21,18 @@ defmodule MessengerWeb.SearchLive do
         phx-value-user_id={user.id}
         phx-target={@myself}
       >
-        <%= user.email %>
+        <%= user.email %> ( <%= user.nickname %> )
       </.button>
     </div>
     """
   end
 
   def handle_event("on_search", %{"search" => search}, socket) do
-    users = Messenger.User.search_users(%{search: search})
+    users =
+      Messenger.User.search_users(%{
+        search: search,
+        excluded_ids: [socket.assigns.current_user_id]
+      })
 
     {:noreply, assign(socket, users: users)}
   end
