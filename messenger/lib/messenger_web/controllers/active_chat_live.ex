@@ -50,7 +50,7 @@ defmodule MessengerWeb.ActiveChatLive do
           class="p-4 h-[8.6rem] box-border mt-auto"
         >
           <.input type="textarea" field={@form[:body]} placeholder="Type here..." />
-          <.button class="w-full mt-2" disabled={!@form.source.valid?}>Send</.button>
+          <.button class="w-full mt-2">Send</.button>
         </.form>
       </div>
       <div :if={!@chat} class="w-full h-full flex items-center justify-center">

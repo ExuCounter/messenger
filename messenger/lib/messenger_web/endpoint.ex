@@ -15,7 +15,8 @@ defmodule MessengerWeb.Endpoint do
 
   socket "/chats", MessengerWeb.ChatsSocket,
     websocket: true,
-    longpoll: false
+    longpoll: false,
+    websocket: [timeout: 45_000]
 
   # Serve at "/" the static files from "priv/static" directory.
   #
