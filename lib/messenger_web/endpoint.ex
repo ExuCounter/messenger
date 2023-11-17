@@ -11,10 +11,10 @@ defmodule MessengerWeb.Endpoint do
     same_site: "Lax"
   ]
 
-  socket "/live", Phoenix.LiveView.Socket, websocket: [connect_info: [session: @session_options]]
+  socket "/live", Phoenix.LiveView.Socket,
+    websocket: [connect_info: [session: @session_options, timeout: 45_000]]
 
   socket "/chats", MessengerWeb.ChatsSocket,
-    websocket: true,
     longpoll: false,
     websocket: [timeout: 45_000]
 
