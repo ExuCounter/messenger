@@ -66,7 +66,6 @@ Hooks.Session = {
           return res.json();
         })
         .then((res) => {
-          console.log(res);
           this.pushEvent("redirect_to_chats", {});
         });
     });

@@ -1,5 +1,5 @@
 <div class="flex w-screen h-screen">
-  <div class="w-[250px] bg-primary-800 p-4 flex flex-col justify-between">
+  <div class="w-[25rem] bg-primary-800 p-4 flex flex-col justify-between">
     <div>
       <span class="text-white pb-8 font-bold">Hello, <%= @current_user.nickname %></span>
       <.live_component module={MessengerWeb.SearchLive} id="search" current_user_id={@current_user.id}/>

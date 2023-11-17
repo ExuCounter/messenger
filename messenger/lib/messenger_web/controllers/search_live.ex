@@ -42,29 +42,17 @@ defmodule MessengerWeb.SearchLive do
            user_id: socket.assigns.current_user_id,
            required_user_id: user_id,
            title: "Chat with this user"
-         })
-         |> IO.inspect() do
+         }) do
       {:ok, chat} ->
-        send_update(MessengerWeb.ActiveChatLive,
-          id: "active_chat",
-          chat: chat,
-          current_user_id: socket.assigns.current_user_id
-        )
-
+        send(self(), %{active_chat_id: Integer.to_string(chat.id)})
         send(self(), :reload_chats)
 
-        {:noreply, socket}
+        {:noreply, assign(socket, form: to_form(%{"search" => ""}), users: [])}
 
       {:existing_chat, chat} ->
-        send_update(MessengerWeb.ActiveChatLive,
-          id: "active_chat",
-          chat: chat,
-          current_user_id: socket.assigns.current_user_id
-        )
+        send(self(), %{active_chat_id: Integer.to_string(chat.id)})
 
-        send(self(), :reload_chats)
-
-        {:noreply, socket}
+        {:noreply, assign(socket, form: to_form(%{"search" => ""}), users: [])}
     end
   end
 

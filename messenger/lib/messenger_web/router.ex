@@ -7,7 +7,8 @@ defmodule MessengerWeb.Auth do
 
   def on_mount(:check_auth, _params, session, socket) do
     if session["current_user"] do
-      {:halt, redirect(socket, to: "/chats")}
+      {:halt,
+       redirect(socket, to: MessengerWeb.Router.Helpers.live_path(socket, MessengerWeb.ChatsLive))}
     else
       {:cont, socket}
     end
@@ -17,7 +18,8 @@ defmodule MessengerWeb.Auth do
     if session["current_user"] do
       {:cont, socket}
     else
-      {:halt, redirect(socket, to: "/login")}
+      {:halt,
+       redirect(socket, to: MessengerWeb.Router.Helpers.live_path(socket, MessengerWeb.LoginLive))}
     end
   end
 end

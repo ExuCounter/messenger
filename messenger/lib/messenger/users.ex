@@ -48,8 +48,9 @@ defmodule Messenger.User do
 
   def login_user_changeset(user, attrs) do
     user
-    |> cast(attrs, [:email, :password, :nickname])
-    |> validate_required([:email, :password, :nickname])
+    |> cast(attrs, [:email, :password])
+    |> validate_required([:email, :password])
+    |> validate_length(:password, min: 2)
     |> validate_email(:email)
   end
 
@@ -93,7 +94,7 @@ defmodule Messenger.User do
   def login(%{email: email, password: password} = _params) do
     case get_user_by_email(email) do
       nil ->
-        {:error, "There is no such user"}
+        {:error, "Wrong credentials"}
 
       user ->
         IO.inspect(user.password_hash)

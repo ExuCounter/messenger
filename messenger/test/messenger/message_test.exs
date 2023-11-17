@@ -2,7 +2,7 @@ defmodule MessageTest do
   use MessengerWeb.ConnCase, async: true
 
   setup_all do
-    raw_user = %{email: "test@gmail.com", password: "mypassword"}
+    raw_user = %{email: "test@gmail.com", nickname: "test", password: "mypassword"}
 
     %{
       raw_user: raw_user

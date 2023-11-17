@@ -2,7 +2,7 @@ defmodule MessengerWeb.RoomChannel do
   use MessengerWeb, :channel
 
   @impl true
-  def join("room:" <> room_id, payload, socket) do
+  def join("room:" <> _room_id, payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
     else

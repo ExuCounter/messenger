@@ -1,11 +1,12 @@
 <.auth_header type="register" />
 
-<div class="flex flex-col items-center h-[calc(100vh-45px)] justify-center bg-secondary-100">
-  <.form for={@form} phx-change="validate" phx-submit="save" phx-hook="Session" class="block min-w-[300px]">
-    <.input type="email" field={@form[:email]} placeholder="email" class="mb-3"/>
-    <.input type="text" field={@form[:nickname]} placeholder="nickname" class="mb-3"/>
-    <.input type="password" field={@form[:password]} placeholder="password" class="mb-3"/>
-    <span class="mb-3"><%= @error %></span>
-    <.button type="submit" class="w-full">Sign up</.button>
+<div class="flex flex-col items-center h-[calc(100vh-45px)] justify-center">
+  <.form for={@form} phx-change="validate" phx-submit="save" phx-hook="Session" id="register_form" class="block min-w-[30rem]">
+    <.field required type="email" field={@form[:email]} label="Email" placeholder="Your email" class="mb-2" label_class="text-neutral-600 font-bold" wrapper_class="mb-2"/>
+    <.field required type="text" field={@form[:nickname]} label="Nickname" placeholder="Your nickname" class="mb-2" label_class="text-neutral-600 font-bold" wrapper_class="mb-2"/>
+    <.field required type="password" field={@form[:password]} placeholder="Your password" class="mb-2" label_class="text-neutral-600 font-bold"
+    wrapper_class="mb-5"/>
+    <div class="mb-3 bg-secondary-600 text-secondary-100 px-4 py-2 rounded-xl text-sm text-center" :if={@error}><%= @error %></div>
+    <.button type="submit" class="submit-button" class="w-full" disabled={!@form.source.valid?}>Sign up</.button>
   </.form>
 </div>

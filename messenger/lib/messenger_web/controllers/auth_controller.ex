@@ -5,13 +5,20 @@ defmodule MessengerWeb.AuthController do
     token = conn.body_params["token"]
 
     with {:ok, user, _claims} <- Messenger.Guardian.resource_from_token(token) do
-      conn |> put_session(:current_user, user) |> json(%{authorized: true})
+      conn
+      |> put_session(:current_user, user)
+      |> json(%{
+        authorized: true,
+        redirect_path: MessengerWeb.Router.Helpers.live_path(conn, MessengerWeb.ChatsLive)
+      })
     else
       {:error, reason} -> conn |> json(%{authorized: false, reason: reason})
     end
   end
 
   def logout(conn, _params) do
-    conn |> put_session(:current_user, nil) |> json(%{authorized: false})
+    conn
+    |> put_session(:current_user, nil)
+    |> json(%{authorized: false})
   end
 end

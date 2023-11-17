@@ -2,7 +2,7 @@ defmodule ChatTest do
   use MessengerWeb.ConnCase, async: true
 
   setup_all do
-    raw_user = %{email: "test@gmail.com", password: "mypassword"}
+    raw_user = %{email: "test@gmail.com", nickname: "test", password: "mypassword"}
 
     %{
       raw_user: raw_user
@@ -24,7 +24,11 @@ defmodule ChatTest do
     {:ok, created_user} = Messenger.User.create_user(raw_user)
 
     {:ok, another_created_user} =
-      Messenger.User.create_user(%{email: "another_user@gmail.com", password: "password"})
+      Messenger.User.create_user(%{
+        email: "another_user@gmail.com",
+        nickname: "another",
+        password: "password"
+      })
 
     {:ok, chat} = Messenger.Chat.create_chat(%{title: "My chat", user_id: created_user.id})
 

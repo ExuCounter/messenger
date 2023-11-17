@@ -27,7 +27,14 @@ defmodule MessengerWeb.ChatsLive do
   def handle_info(:reload_chats, socket) do
     {:noreply,
      assign(socket,
-       active_chat_id: socket.assigns.active_chat_id
+       current_user: socket.assigns.current_user |> Messenger.Repo.preload(:chats, force: true)
+     )}
+  end
+
+  def handle_info(%{active_chat_id: active_chat_id} = _params, socket) do
+    {:noreply,
+     assign(socket,
+       active_chat_id: active_chat_id
      )}
   end
 

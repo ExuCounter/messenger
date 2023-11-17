@@ -9,7 +9,7 @@ defmodule MessengerWeb.ActiveChatLive do
     ~H"""
     <div class="bg-secondary-100 h-full">
       <div :if={@chat}>
-        <div class="h-[calc(100vh-88px)] overflow-y-scroll" id="scrollable-chat">
+        <div class="h-[calc(100vh-8.6rem)] overflow-y-scroll" id="scrollable-chat">
           <div :if={length(@chat.messages) > 0}>
             <%= for i <- 0..length(@chat.messages) - 1 do %>
               <div
@@ -47,10 +47,10 @@ defmodule MessengerWeb.ActiveChatLive do
           for={@form}
           phx-submit="save"
           phx-target={@myself}
-          class="p-4 h-88px box-border mt-auto"
+          class="p-4 h-[8.6rem] box-border mt-auto"
         >
           <.input type="textarea" field={@form[:body]} placeholder="Type here..." />
-          <.button class="w-full mt-2">Send</.button>
+          <.button class="w-full mt-2" disabled={!@form.source.valid?}>Send</.button>
         </.form>
       </div>
       <div :if={!@chat} class="w-full h-full flex items-center justify-center">
