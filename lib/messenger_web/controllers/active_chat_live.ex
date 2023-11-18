@@ -17,7 +17,7 @@ defmodule MessengerWeb.ActiveChatLive do
             phx-target={@myself}
           /> Chat with user <%= Enum.find(@chat.users, &(&1.id != assigns.user_id)).nickname %>
         </div>
-        <div class="h-[calc(100vh-8.6rem-56px)] overflow-y-scroll" id="scrollable-chat">
+        <div class="h-[calc(100vh-8.95rem-56px)] overflow-y-scroll" id="scrollable-chat">
           <div :if={length(@chat.messages) > 0}>
             <%= for i <- 0..length(@chat.messages) - 1 do %>
               <div
@@ -55,7 +55,7 @@ defmodule MessengerWeb.ActiveChatLive do
           for={@form}
           phx-submit="save"
           phx-target={@myself}
-          class="p-4 h-[8.6rem] box-border mt-auto"
+          class="p-4 h-[8.95rem] box-border mt-auto"
         >
           <.input type="textarea" field={@form[:body]} placeholder="Type here..." />
           <.button class="w-full mt-2">Send</.button>

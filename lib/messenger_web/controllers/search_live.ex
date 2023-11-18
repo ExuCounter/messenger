@@ -45,9 +45,14 @@ defmodule MessengerWeb.SearchLive do
          }) do
       {:ok, chat} ->
         send(self(), %{active_chat_id: Integer.to_string(chat.id)})
-        send(self(), :reload_chats)
 
-        MessengerWeb.Endpoint.subscribe("room:#{chat.id}")
+        MessengerWeb.Endpoint.broadcast!("user:#{user_id}", "new_chat", chat)
+
+        MessengerWeb.Endpoint.broadcast!(
+          "user:#{socket.assigns.current_user_id}",
+          "new_chat",
+          chat
+        )
 
         {:noreply, assign(socket, form: to_form(%{"search" => ""}), users: [])}
 

@@ -10,6 +10,8 @@ defmodule MessengerWeb.ChatsLive do
       end
     end
 
+    MessengerWeb.Endpoint.subscribe("user:#{user.id}")
+
     {:ok,
      assign(socket,
        current_user: user,
@@ -40,7 +42,7 @@ defmodule MessengerWeb.ChatsLive do
 
   def handle_info(
         %Phoenix.Socket.Broadcast{
-          event: _event,
+          event: "new_msg" = _event,
           payload: payload,
           topic: _topic
         },
@@ -48,11 +50,32 @@ defmodule MessengerWeb.ChatsLive do
       ) do
     send_update(MessengerWeb.ActiveChatLive,
       id: "active_chat",
-      active_chat_id: payload.chat_id,
+      active_chat_id: socket.assigns.active_chat_id,
       current_user_id: socket.assigns.current_user.id
     )
 
     {:noreply, socket}
+  end
+
+  def handle_info(
+        %Phoenix.Socket.Broadcast{
+          event: "new_chat" = _event,
+          payload: new_chat,
+          topic: _topic
+        },
+        socket
+      ) do
+    MessengerWeb.Endpoint.subscribe("room:#{new_chat.id}")
+
+    {:noreply,
+     assign(socket,
+       current_user:
+         Map.put(
+           socket.assigns.current_user,
+           :chats,
+           socket.assigns.current_user.chats ++ [new_chat]
+         )
+     )}
   end
 
   def handle_event("logout", _params, socket) do

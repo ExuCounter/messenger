@@ -39,6 +39,7 @@ defmodule MessengerWeb.ChatsSocket do
   end
 
   channel "room:*", MessengerWeb.RoomChannel
+  channel "user:*", MessengerWeb.UserChannel
 
   # Socket id's are topics that allow you to identify all sockets for a given user:
   #
