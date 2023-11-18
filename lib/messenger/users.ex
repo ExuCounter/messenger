@@ -71,7 +71,7 @@ defmodule Messenger.User do
   end
 
   def search_users(params) do
-    if String.length(params.search) < 3 do
+    if String.length(params.search) < 1 do
       []
     else
       query =

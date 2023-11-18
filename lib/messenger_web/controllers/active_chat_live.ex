@@ -9,7 +9,15 @@ defmodule MessengerWeb.ActiveChatLive do
     ~H"""
     <div class="bg-secondary-100 h-full">
       <div :if={@chat}>
-        <div class="h-[calc(100vh-8.6rem)] overflow-y-scroll" id="scrollable-chat">
+        <div class="bg-primary-700 p-4 text-white flex flex-row">
+          <.icon
+            name={:arrow_uturn_left}
+            class="h-5 text-white mr-3 cursor-pointer"
+            phx-click="back_to_chats"
+            phx-target={@myself}
+          /> Chat with user <%= Enum.find(@chat.users, &(&1.id != assigns.user_id)).nickname %>
+        </div>
+        <div class="h-[calc(100vh-8.6rem-56px)] overflow-y-scroll" id="scrollable-chat">
           <div :if={length(@chat.messages) > 0}>
             <%= for i <- 0..length(@chat.messages) - 1 do %>
               <div
@@ -69,6 +77,8 @@ defmodule MessengerWeb.ActiveChatLive do
       })
       |> to_form()
 
+    IO.inspect(assigns.active_chat_id)
+
     active_chat_id = Map.get(assigns, :active_chat_id, nil)
 
     if active_chat_id do
@@ -90,6 +100,12 @@ defmodule MessengerWeb.ActiveChatLive do
          user_id: assigns.current_user_id
        )}
     end
+  end
+
+  def handle_event("back_to_chats", _params, socket) do
+    send(self(), %{active_chat_id: nil})
+
+    {:noreply, socket}
   end
 
   def handle_event("save", %{"message" => message} = _params, socket) do

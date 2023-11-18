@@ -1,7 +1,7 @@
 <.auth_header type="login" />
 
 <div class="flex flex-col items-center h-[calc(100vh-45px)] justify-center">
-  <.form for={@form} phx-change="validate" phx-submit="save" phx-hook="Session" id="login_form" class="block min-w-[30rem]">
+  <.form for={@form} phx-change="validate" phx-submit="save" phx-hook="Session" id="login_form" class="block max-w-[30rem] w-full px-4">
     <.field required type="email" field={@form[:email]} label="Email" placeholder="Your email" class="mb-2" label_class="text-neutral-600 font-bold" wrapper_class="mb-2"/>
     <.field required type="password" field={@form[:password]} placeholder="Your password" class="mb-2" label_class="text-neutral-600 font-bold"
     wrapper_class="mb-5"/>
